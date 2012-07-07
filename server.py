@@ -16,7 +16,7 @@ class MainHandler(tornado.web.RequestHandler):
         #    download.downloadFile()
         #    self.isDownloaded = True
         path = "static/res"
-        files = ["http://127.0.0.1:8888/" + join(path, f) for f in os.listdir(path) if isfile(join(path, f))]
+        files = ["http://192.168.1.104:8888/" + join(path, f) for f in os.listdir(path) if isfile(join(path, f))]
         json = {"pics": files}
         self.write(JSONEncoder().encode(json))
 

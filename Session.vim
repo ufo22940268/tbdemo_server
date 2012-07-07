@@ -184,7 +184,6 @@ set autoread
 set autowrite
 set background=dark
 set backspace=2
-set balloonexpr=JavaBrowser_Show_Prototype()
 set cindent
 set cmdheight=2
 set cscopeverbose
@@ -289,8 +288,6 @@ setlocal formatexpr=
 setlocal formatoptions=tcq
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
-setlocal iminsert=2
-setlocal imsearch=2
 setlocal include=
 setlocal includeexpr=
 setlocal indentexpr=HtmlIndentGet(v:lnum)
