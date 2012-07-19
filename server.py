@@ -10,13 +10,19 @@ from json import JSONEncoder
 
 
 class MainHandler(tornado.web.RequestHandler):
+    def readServerIp(self):
+        url = open("config").readline().rstrip().split("=")[1]
+        if url[-1] != "/":
+            url += "/"
+        return url
+
     #isDownloaded = False
     def get(self):
         #if not self.isDownloaded:
         #    download.downloadFile()
         #    self.isDownloaded = True
         path = "static/res"
-        files = ["http://192.168.1.104:8888/" + join(path, f) for f in os.listdir(path) if isfile(join(path, f))]
+        files = [self.readServerIp() + join(path, f) for f in os.listdir(path) if isfile(join(path, f))]
         json = {"pics": files}
         self.write(JSONEncoder().encode(json))
 
