@@ -26,6 +26,8 @@ vnoremap $2 `>a]`<i[
 vnoremap $1 `>a)`<i(
 snoremap % b<BS>%
 snoremap ' b<BS>'
+vmap ,3 :set syntax=python
+vmap ,4 :set ft=javascript
 nmap <silent> ,cv <Plug>VCSVimDiff
 nmap <silent> ,cu <Plug>VCSUpdate
 nmap <silent> ,cU <Plug>VCSUnlock
@@ -92,9 +94,7 @@ map ,cd :cd %:p:h
 nmap ,fu :se ff=unix
 nmap ,fd :se ff=dos
 map ,$ :syntax sync fromstart
-vmap ,4 :set ft=javascript
 omap ,4 :set ft=javascript
-vmap ,3 :set syntax=python
 omap ,3 :set syntax=python
 map ,2 :set syntax=xhtml
 map ,1 :set syntax=cheetah
@@ -184,6 +184,7 @@ set autoread
 set autowrite
 set background=dark
 set backspace=2
+set balloonexpr=JavaBrowser_Show_Prototype()
 set cindent
 set cmdheight=2
 set cscopeverbose
@@ -232,15 +233,26 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +0 ~/workspace_tb/base.html
+badd +22 ~/workspace_tb/server/server.py
 args ~/workspace_tb/server.py
-edit ~/workspace_tb/base.html
+edit ~/workspace_tb/server/server.py
 set splitbelow splitright
 set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
 argglobal
+let s:cpo_save=&cpo
+set cpo&vim
+map <buffer> \b <Plug>JavagetsetInsertBothGetterSetter
+map <buffer> \s <Plug>JavagetsetInsertSetterOnly
+map <buffer> \g <Plug>JavagetsetInsertGetterOnly
+map <buffer> \p <Plug>JavagetsetInsertGetterSetter
+iabbr <buffer> #m if __name__=="__main__":
+iabbr <buffer> #p print
+iabbr <buffer> #i import
+let &cpo=s:cpo_save
+unlet s:cpo_save
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -250,12 +262,12 @@ setlocal bufhidden=
 setlocal buflisted
 setlocal buftype=
 setlocal cindent
-setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
+setlocal cinkeys=0{,0},0),:,!^F,o,O,e
 setlocal cinoptions=
 setlocal cinwords=if,else,while,do,for,switch
 setlocal colorcolumn=
-setlocal comments=s:<!--,m:\ \ \ \ ,e:-->
-setlocal commentstring=<!--%s-->
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:XCOMM,n:>,fb:-
+setlocal commentstring=#%s
 setlocal complete=.,w,b,u,t,i
 setlocal concealcursor=
 setlocal conceallevel=0
@@ -269,10 +281,10 @@ setlocal define=
 setlocal dictionary=
 setlocal nodiff
 setlocal equalprg=
-setlocal errorformat=
+setlocal errorformat=%A\ \ File\ \"%f\"\\,\ line\ %l\\,%m,%C\ \ \ \ %.%#,%+Z%.%#Error:\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l,%+C\ \ %.%#,%-C%p^,%Z%m,%-G%.%#
 setlocal expandtab
-if &filetype != 'htmldjango'
-setlocal filetype=htmldjango
+if &filetype != 'python'
+setlocal filetype=python
 endif
 setlocal foldcolumn=0
 setlocal foldenable
@@ -288,26 +300,28 @@ setlocal formatexpr=
 setlocal formatoptions=tcq
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
-setlocal include=
-setlocal includeexpr=
-setlocal indentexpr=HtmlIndentGet(v:lnum)
-setlocal indentkeys=o,O,*<Return>,<>>,{,}
+setlocal iminsert=2
+setlocal imsearch=2
+setlocal include=^\\s*\\(from\\|import\\)
+setlocal includeexpr=substitute(v:fname,'\\.','/','g')
+setlocal indentexpr=GetPythonIndent(v:lnum)
+setlocal indentkeys=0{,0},:,!^F,o,O,e,<:>,=elif,=except
 setlocal noinfercase
 setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
+setlocal keywordprg=pydoc
 set linebreak
 setlocal linebreak
 setlocal nolisp
 setlocal nolist
 setlocal makeprg=
-setlocal matchpairs=(:),{:},[:],<:>
+setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 setlocal nrformats=octal,hex
 set number
 setlocal number
 setlocal numberwidth=4
-setlocal omnifunc=htmlcomplete#CompleteTags
+setlocal omnifunc=pythoncomplete#Complete
 setlocal path=
 setlocal nopreserveindent
 setlocal nopreviewwindow
@@ -329,8 +343,8 @@ setlocal statusline=
 setlocal suffixesadd=.java,.xml,.9.png,.png
 setlocal noswapfile
 setlocal synmaxcol=3000
-if &syntax != 'htmldjango'
-setlocal syntax=htmldjango
+if &syntax != 'python'
+setlocal syntax=python
 endif
 setlocal tabstop=4
 setlocal tags=
@@ -341,12 +355,12 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 9 - ((8 * winheight(0) + 25) / 50)
+let s:l = 22 - ((21 * winheight(0) + 25) / 50)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-9
-normal! 016l
+22
+normal! 0
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf
 endif
